@@ -77,6 +77,20 @@ function computeCohesion(
 const mono = { fontFamily: "var(--font-mono-stack)" } as const;
 const display = { fontFamily: "var(--font-display)" } as const;
 
+/** Post-process clusters: if 50+ independent individuals converge on the same
+ *  argument (non-campaign), flag it as requires_response even if the LLM missed it. */
+const INDEPENDENT_CONVERGENCE_THRESHOLD = 50;
+function applyConvergenceRule(clusters: ArgumentCluster[]): ArgumentCluster[] {
+  return clusters.map((c) => {
+    if (c.requires_response) return c;
+    const independentCount = c.comment_ids.length - c.expert_count;
+    if (independentCount >= INDEPENDENT_CONVERGENCE_THRESHOLD) {
+      return { ...c, requires_response: true };
+    }
+    return c;
+  });
+}
+
 /* ====================================================================
    Main Component
    ==================================================================== */
@@ -240,7 +254,7 @@ export default function Home() {
         arguments: ExtractedArgument[];
         stats: Stats;
       };
-      setClusters(d.clusters);
+      setClusters(applyConvergenceRule(d.clusters));
       setAllClassified(d.classified);
       setAllArguments(d.arguments);
       setStats((s) => ({ ...s, ...d.stats }));
@@ -281,7 +295,7 @@ export default function Home() {
       setStats(data.stats);
       setAllClassified(data.classified);
       setAllArguments(data.arguments);
-      setClusters(data.clusters);
+      setClusters(applyConvergenceRule(data.clusters));
       setDemoResponses(data.responses);
       const cmap: Record<string, CampaignTracker> = {};
       for (const [cid, info] of Object.entries(data.campaigns)) {
@@ -690,6 +704,11 @@ export default function Home() {
                               {cluster.expert_count > 0 && (
                                 <span className="text-[11px] tracking-wider uppercase font-bold text-[#f0a500] bg-[#f0a500]/10 border border-[#f0a500]/30 px-2 py-0.5 rounded">
                                   {cluster.expert_count} expert{cluster.expert_count > 1 ? "s" : ""}
+                                </span>
+                              )}
+                              {cluster.expert_count === 0 && cluster.requires_response && cluster.comment_ids.length >= INDEPENDENT_CONVERGENCE_THRESHOLD && (
+                                <span className="text-[11px] tracking-wider uppercase font-bold text-[#58a6ff] bg-[#58a6ff]/10 border border-[#58a6ff]/30 px-2 py-0.5 rounded">
+                                  {cluster.comment_ids.length} independent voices
                                 </span>
                               )}
                               {lowCohesion && (

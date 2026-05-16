@@ -23,7 +23,10 @@ Use these hierarchical policy families as top-level categories. Every cluster MU
 
 Two comments saying "this will cost jobs" and "small businesses can't afford compliance" belong in the SAME family (Economic Impact) even though the words are different. But "we need more air monitors in valley floors" (Technical / Scientific Methodology) is DISTINCT from "poor air quality causes asthma" (Public Health).
 
-Mark a cluster as "requires_response: true" if the agency is legally obligated under the Oregon APA (ORS 183.335) to address it in the Response-to-Comments document. Generally: contains at least one expert testimony, OR contains a specific factual/legal challenge to the rule.
+Mark a cluster as "requires_response: true" if the agency is legally obligated under the Oregon APA (ORS 183.335) to address it in the Response-to-Comments document. A cluster requires response if ANY of these conditions hold:
+1. Contains at least one expert testimony
+2. Contains a specific factual/legal challenge to the rule
+3. Contains 50+ INDEPENDENT individual commenters making the same argument (not campaign duplicates). Independent convergence at scale represents significant public concern that legally and politically warrants agency response, even without expert backing.
 
 Use the language "logically similar policy arguments" not "identical arguments."
 
