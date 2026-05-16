@@ -504,13 +504,21 @@ export default function Home() {
             </span>
           </div>
 
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4">
             {startTime && phase !== "complete" && phase !== "error" && (
               <span className="text-xs text-[#8b949e] tabular-nums" style={mono}>
                 {elapsed.toFixed(1)}s
               </span>
             )}
             <PhaseChip phase={phase} />
+            <button
+              onClick={() => { setPhase("idle"); setError(null); setFailedAgent(null); setStartTime(null); }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#30363d] text-xs text-[#8b949e] font-medium hover:bg-[#21262d] hover:text-[#e6edf3] transition-colors"
+              style={mono}
+            >
+              <RotateCcw className="h-3 w-3" />
+              New Analysis
+            </button>
           </div>
         </div>
       </header>
@@ -625,7 +633,13 @@ export default function Home() {
                             : "border-[#30363d] bg-[#161b22] hover:border-[#484f58]"
                         }`}
                       >
-                        <button className="w-full text-left px-4 py-3.5" onClick={() => toggleClusterExpand(cluster.cluster_id)}>
+                        <button
+                          className="w-full text-left px-4 py-3.5"
+                          onClick={() => {
+                            generateResponse(cluster);
+                            if (!isExpanded) toggleClusterExpand(cluster.cluster_id);
+                          }}
+                        >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-[11px] tracking-wider uppercase font-bold text-[#0d1117] bg-[#8b949e] px-2 py-0.5 rounded" style={mono}>
@@ -666,13 +680,6 @@ export default function Home() {
                                 <span>Low cohesion: {(coh.score * 100).toFixed(0)}% share dominant area ({coh.dominant}). Review recommended.</span>
                               </div>
                             )}
-                            <button
-                              onClick={(e) => { e.stopPropagation(); generateResponse(cluster); }}
-                              className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-[#f0a500] text-[#0d1117] text-sm font-bold hover:bg-[#ffb519] transition-colors"
-                            >
-                              <Zap className="h-4 w-4" />
-                              Generate Draft Response
-                            </button>
                           </div>
                         )}
                       </div>
