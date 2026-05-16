@@ -126,6 +126,7 @@ export default function Home() {
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(
     new Set()
   );
+  const [streamFilter, setStreamFilter] = useState<string>("all");
   const streamRef = useRef<HTMLDivElement>(null);
 
   // Timer
@@ -334,6 +335,11 @@ export default function Home() {
 
   const totalFormLetters = Object.values(campaigns).reduce((s, c) => s + c.count, 0);
 
+  const filteredClassifications = useMemo(() => {
+    if (streamFilter === "all") return recentClassifications;
+    return recentClassifications.filter((c) => c.category === streamFilter);
+  }, [recentClassifications, streamFilter]);
+
   const toggleClusterExpand = (id: string) => {
     setExpandedClusters((prev) => {
       const next = new Set(prev);
@@ -492,14 +498,20 @@ export default function Home() {
       <header className="border-b border-[#21262d] bg-[#161b22] shrink-0">
         <div className="px-5 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded-md bg-gradient-to-br from-[#f0a500] to-[#b37800] flex items-center justify-center">
-              <Shield className="h-4 w-4 text-[#0d1117]" strokeWidth={2.5} />
-            </div>
-            <span className="text-xs font-semibold tracking-[0.2em] uppercase text-[#e6edf3]" style={mono}>
-              Cascade
-            </span>
+            <button
+              onClick={() => { setPhase("idle"); setError(null); setFailedAgent(null); setStartTime(null); }}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              title="Back to home"
+            >
+              <div className="h-7 w-7 rounded-md bg-gradient-to-br from-[#f0a500] to-[#b37800] flex items-center justify-center">
+                <Shield className="h-4 w-4 text-[#0d1117]" strokeWidth={2.5} />
+              </div>
+              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-[#e6edf3]" style={mono}>
+                Cascade
+              </span>
+            </button>
             <div className="h-4 w-px bg-[#30363d]" />
-            <span className="text-[10px] text-[#484f58] tracking-wider uppercase" style={mono}>
+            <span className="text-xs text-[#8b949e] tracking-wider uppercase" style={mono}>
               OR-DEQ-2026-AQ-014
             </span>
           </div>
@@ -513,11 +525,10 @@ export default function Home() {
             <PhaseChip phase={phase} />
             <button
               onClick={() => { setPhase("idle"); setError(null); setFailedAgent(null); setStartTime(null); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#30363d] text-xs text-[#8b949e] font-medium hover:bg-[#21262d] hover:text-[#e6edf3] transition-colors"
-              style={mono}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#21262d] border border-[#30363d] text-sm text-[#e6edf3] font-medium hover:bg-[#30363d] transition-colors"
             >
-              <RotateCcw className="h-3 w-3" />
-              New Analysis
+              <RotateCcw className="h-3.5 w-3.5" />
+              Home
             </button>
           </div>
         </div>
@@ -580,6 +591,28 @@ export default function Home() {
         {/* PANEL 1: Live Stream */}
         <div className="w-[340px] shrink-0 border-r border-[#21262d] flex flex-col">
           <PanelHead title="Live Stream" sub="Agent 1 / Haiku 4.5" badge={`${processed}/${total}`} icon={<Activity className="h-4 w-4 text-[#58a6ff]" />} />
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-1 px-2.5 py-2 border-b border-[#21262d] bg-[#161b22]/50">
+            {[
+              { key: "all", label: "All" },
+              { key: "expert", label: "Expert" },
+              { key: "substantive", label: "Substantive" },
+              { key: "individual_opinion", label: "Individual" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setStreamFilter(tab.key)}
+                className={`px-3 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-colors ${
+                  streamFilter === tab.key
+                    ? "bg-[#f0a500]/15 text-[#f0a500] border border-[#f0a500]/30"
+                    : "text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] border border-transparent"
+                }`}
+                style={mono}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
           <div ref={streamRef} className="flex-1 overflow-y-auto p-2.5 space-y-2">
             {/* Campaign banners */}
             {Object.values(campaigns).map((camp) => (
@@ -592,11 +625,15 @@ export default function Home() {
               </div>
             ))}
 
-            {recentClassifications.length === 0 && phase === "classifying" && (
+            {filteredClassifications.length === 0 && phase === "classifying" && (
               <p className="text-xs text-[#484f58] italic p-3 text-center">Waiting for first batch...</p>
             )}
 
-            {recentClassifications.map((c) => (
+            {filteredClassifications.length === 0 && recentClassifications.length > 0 && (
+              <p className="text-xs text-[#8b949e] italic p-3 text-center">No comments match this filter.</p>
+            )}
+
+            {filteredClassifications.map((c) => (
               <StreamCard key={c.id} comment={c} />
             ))}
           </div>
