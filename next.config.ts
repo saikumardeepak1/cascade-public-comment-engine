@@ -28,8 +28,8 @@ const nextConfig: NextConfig = {
     root: resolve(import.meta.dirname),
   },
   env: {
-    ANTHROPIC_API_KEY: projectEnv.ANTHROPIC_API_KEY || "",
-    ANTHROPIC_BASE_URL: projectEnv.ANTHROPIC_BASE_URL || "",
+    ANTHROPIC_API_KEY: projectEnv.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY || "",
+    ANTHROPIC_BASE_URL: projectEnv.ANTHROPIC_BASE_URL || process.env.ANTHROPIC_BASE_URL || "",
   },
 };
 
