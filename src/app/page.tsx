@@ -349,10 +349,14 @@ export default function Home() {
 
   const totalFormLetters = Object.values(campaigns).reduce((s, c) => s + c.count, 0);
 
+  const displayComments = phase === "complete" || allClassified.length > recentClassifications.length
+    ? allClassified
+    : recentClassifications;
+
   const filteredClassifications = useMemo(() => {
-    if (streamFilter === "all") return recentClassifications;
-    return recentClassifications.filter((c) => c.category === streamFilter);
-  }, [recentClassifications, streamFilter]);
+    if (streamFilter === "all") return displayComments;
+    return displayComments.filter((c) => c.category === streamFilter);
+  }, [displayComments, streamFilter]);
 
   const toggleClusterExpand = (id: string) => {
     setExpandedClusters((prev) => {
@@ -1074,9 +1078,14 @@ function CatBadge({ category }: { category: string }) {
 }
 
 function StreamCard({ comment }: { comment: ClassifiedComment }) {
+  const [expanded, setExpanded] = useState(false);
   const isExpert = comment.category === "expert_testimony";
+  const isLong = comment.text.length > 160;
   return (
-    <div className={`rounded-lg border-l-[3px] ${CAT_BORDERS[comment.category] || "border-l-[#30363d]"} border border-[#30363d] bg-[#161b22] px-3.5 py-3 animate-card-enter ${isExpert ? "ring-1 ring-[#f0a500]/20" : ""}`}>
+    <div
+      className={`rounded-lg border-l-[3px] ${CAT_BORDERS[comment.category] || "border-l-[#30363d]"} border border-[#30363d] bg-[#161b22] px-3.5 py-3 animate-card-enter cursor-pointer hover:border-[#484f58] transition-colors ${isExpert ? "ring-1 ring-[#f0a500]/20" : ""}`}
+      onClick={() => setExpanded(!expanded)}
+    >
       <div className="flex items-center justify-between">
         <span className="text-xs text-[#8b949e]" style={mono}>{comment.id}</span>
         <span className={`text-[11px] tracking-wider uppercase font-bold ${CAT_COLORS[comment.category] || "text-[#8b949e]"}`} style={mono}>
@@ -1087,7 +1096,14 @@ function StreamCard({ comment }: { comment: ClassifiedComment }) {
         {comment.submitter}
         {comment.submitter_org && <span className="text-[#8b949e] font-normal text-xs"> ({comment.submitter_org})</span>}
       </div>
-      <div className="mt-1.5 text-[13px] text-[#b1bac4] leading-relaxed line-clamp-2">{comment.text.slice(0, 160)}</div>
+      <div className={`mt-1.5 text-[13px] text-[#b1bac4] leading-relaxed ${expanded ? "" : "line-clamp-2"}`}>
+        {expanded ? comment.text : comment.text.slice(0, 160)}{!expanded && isLong && "..."}
+      </div>
+      {isLong && (
+        <span className="mt-1 inline-block text-[11px] text-[#58a6ff] font-medium">
+          {expanded ? "show less" : "read full comment"}
+        </span>
+      )}
       <div className="mt-2 text-xs text-[#8b949e]">{(comment.confidence * 100).toFixed(0)}% &middot; {comment.reasoning}</div>
     </div>
   );
