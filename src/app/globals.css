@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-surface: #161b22;
+  --bg-elevated: #1c2128;
+  --border: #30363d;
+  --border-light: #21262d;
+  --accent-amber: #f0a500;
+  --accent-amber-dim: #b37800;
+  --accent-green: #3fb950;
+  --accent-red: #f85149;
+  --accent-blue: #58a6ff;
+  --accent-purple: #bc8cff;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #484f58;
+
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-mono-stack: "IBM Plex Mono", var(--font-geist-mono), ui-monospace, monospace;
+  --font-body: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono-stack);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+/* Dot grid background pattern */
+.dot-grid {
+  background-image: radial-gradient(circle, #30363d 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Smooth card entrance animation */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-card-enter {
+  animation: card-enter 0.3s ease-out forwards;
+}
+
+/* Pulse glow for live indicators */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Gold underline accent */
+.gold-underline {
+  background-image: linear-gradient(to right, var(--accent-amber), var(--accent-amber-dim));
+  background-size: 100% 3px;
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  padding-bottom: 6px;
+}
+
+/* Government document styling inside dark panels */
+.gov-doc {
+  font-family: Georgia, "Times New Roman", serif;
+  color: #1a1a1a;
+  line-height: 1.7;
+}
+
+.gov-doc p {
+  text-indent: 0;
+  margin-bottom: 0.75em;
+}
