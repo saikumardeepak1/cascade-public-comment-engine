@@ -91,7 +91,7 @@ export async function classifyBatch(
 
 export async function* classifyStream(
   comments: RawComment[],
-  concurrency = 8
+  concurrency = 3
 ): AsyncGenerator<{ batch: ClassifiedComment[]; processed: number; total: number }> {
   const batches: RawComment[][] = [];
   for (let i = 0; i < comments.length; i += BATCH_SIZE) {

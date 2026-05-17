@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 
         // Phase 1: classify with Haiku
         const classified: ClassifiedComment[] = [];
-        for await (const update of classifyStream(comments, 10)) {
+        for await (const update of classifyStream(comments, 3)) {
           classified.push(...update.batch);
           send("classification", {
             batch: update.batch,

@@ -62,9 +62,11 @@ export async function extractArgument(
   }
 }
 
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export async function extractArgumentsConcurrent(
   comments: ClassifiedComment[],
-  concurrency = 6,
+  concurrency = 3,
   onProgress?: (arg: ExtractedArgument, processed: number, total: number) => void
 ): Promise<ExtractedArgument[]> {
   const results: ExtractedArgument[] = [];
@@ -89,6 +91,7 @@ export async function extractArgumentsConcurrent(
   while (cursor < comments.length || inflight.size > 0) {
     while (inflight.size < concurrency && cursor < comments.length) {
       launch(comments[cursor++]);
+      await delay(1100);
     }
     if (inflight.size > 0) {
       await Promise.race(inflight);
