@@ -421,26 +421,21 @@ export default function Home() {
               {/* Buttons */}
               <div className="mt-12 flex items-center justify-center gap-4">
                 <button
-                  onClick={() => handleRun()}
+                  onClick={loadDemoResults}
                   className="px-8 py-3.5 rounded-md bg-[#f0a500] text-[#0d1117] font-bold text-sm tracking-wide hover:bg-[#ffb519] transition-colors shadow-lg shadow-[#f0a500]/10"
                 >
-                  Analyze All 5,127
+                  Launch Demo
                 </button>
                 <button
-                  onClick={() => handleRun(200)}
-                  className="px-8 py-3.5 rounded-md border border-[#e6edf3]/30 text-[#e6edf3] font-medium text-sm tracking-wide hover:bg-[#e6edf3]/5 transition-colors"
+                  onClick={() => handleRun()}
+                  className="px-8 py-3.5 rounded-md border border-[#30363d] text-[#484f58] font-medium text-sm tracking-wide hover:bg-[#161b22] transition-colors cursor-not-allowed"
+                  title="Requires Anthropic API key"
                 >
-                  Quick Demo (200)
-                </button>
-                <button
-                  onClick={loadDemoResults}
-                  className="px-8 py-3.5 rounded-md border border-[#f0a500]/30 text-[#f0a500] font-medium text-sm tracking-wide hover:bg-[#f0a500]/5 transition-colors"
-                >
-                  Load Pre-Run Results
+                  Run Full Pipeline
                 </button>
               </div>
               <p className="mt-3 text-[11px] text-[#484f58]" style={mono}>
-                Pre-run results load instantly, zero API calls
+                Demo loads pre-computed results instantly, zero API calls
               </p>
             </div>
 
